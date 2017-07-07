@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PassportCaminosDeOsa.iml" filepath="$PROJECT_DIR$/PassportCaminosDeOsa.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/passport-caminos-de-osa.iml" filepath="$PROJECT_DIR$/passport-caminos-de-osa.iml" />
     </modules>
   </component>
 </project>
