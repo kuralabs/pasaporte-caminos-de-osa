@@ -8,15 +8,17 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-
+import android.support.design.widget.FloatingActionButton;
 
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 public class MainActivity extends AppCompatActivity implements OnGestureListener {
 
-    Button button;
+    FloatingActionButton addStampButton;
     PageFlipView mPageFlipView;
     GestureDetector mGestureDetector;
 
@@ -39,16 +41,20 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
         super.onCreate(savedInstanceState);
 
         mPageFlipView = new PageFlipView(this);
-        setContentView(mPageFlipView);
-        mGestureDetector = new GestureDetector(this, this);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
-                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-                integrator.initiateScan();
-            }
-        });
+        FrameLayout passportView = new FrameLayout(this);
+        LinearLayout passportWidgets = new LinearLayout(this);
+
+        addStampButton = new FloatingActionButton(this);
+        addStampButton.setCompatElevation(4.0f);
+
+        passportWidgets.addView(addStampButton);
+
+        passportView.addView(mPageFlipView);
+        passportView.addView(passportWidgets);
+
+        setContentView(passportView);
+        mGestureDetector = new GestureDetector(this, this);
 
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
@@ -58,6 +64,13 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
             View.SYSTEM_UI_FLAG_IMMERSIVE |
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
+        addStampButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+                integrator.initiateScan();
+            }
+        });
     }
 
     @Override
@@ -93,8 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
     }
 
     @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                           float velocityY) {
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         return false;
     }
 
@@ -103,8 +115,7 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
     }
 
     @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-                            float distanceY) {
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
         mPageFlipView.onFingerMove(e2.getX(), e2.getY());
         return true;
     }
