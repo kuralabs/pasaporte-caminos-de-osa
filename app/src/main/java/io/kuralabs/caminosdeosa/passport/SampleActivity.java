@@ -1,63 +1,65 @@
+/*
+ * Copyright (C) 2016 eschao <esc.chao@gmail.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.kuralabs.caminosdeosa.passport;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.Build;
 import android.os.Bundle;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+
+import android.preference.PreferenceManager;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.GestureDetector;
+
 import android.view.GestureDetector.OnGestureListener;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+import android.view.WindowManager;
+import android.widget.TextView;
 
+/**
+ * Sample Activity
+ *
+ * @author eschao
+ */
+public class SampleActivity extends Activity implements OnGestureListener {
 
-import com.google.zxing.integration.android.IntentResult;
-import com.google.zxing.integration.android.IntentIntegrator;
-
-public class MainActivity extends AppCompatActivity implements OnGestureListener {
-
-    Button button;
     PageFlipView mPageFlipView;
     GestureDetector mGestureDetector;
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if(result.getContents() == null) {
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mPageFlipView = new PageFlipView(this);
         setContentView(mPageFlipView);
         mGestureDetector = new GestureDetector(this, this);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
-                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-                integrator.initiateScan();
-            }
-        });
-
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
+        mPageFlipView.setSystemUiVisibility(
             View.SYSTEM_UI_FLAG_FULLSCREEN |
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
             View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
             View.SYSTEM_UI_FLAG_IMMERSIVE |
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-
     }
 
     @Override
