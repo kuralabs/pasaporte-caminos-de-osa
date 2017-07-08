@@ -32,7 +32,6 @@ import com.eschao.android.widget.pageflip.PageFlip;
 public abstract class PageRender implements OnPageFlipListener {
 
     public final static int MSG_ENDED_DRAWING_FRAME = 1;
-    private final static String TAG = "PageRender";
 
     final static int DRAW_MOVING_FRAME = 0;
     final static int DRAW_ANIMATING_FRAME = 1;

@@ -16,12 +16,10 @@
 package io.kuralabs.caminosdeosa.passport.flip;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.eschao.android.widget.pageflip.PageFlip;
@@ -41,9 +39,6 @@ import javax.microedition.khronos.opengles.GL10;
 public class PageFlipView extends GLSurfaceView implements Renderer {
 
     private final static String TAG = "PageFlipView";
-    private final static String PREF_MESH_PIXELS = "MeshPixels";
-    private final static String PREF_DURATION    = "Duration";
-    private final static String PREF_PAGE_MODE   = "PageMode";
 
     int mPageNo;
     int mDuration;
@@ -58,28 +53,22 @@ public class PageFlipView extends GLSurfaceView implements Renderer {
         // create handler to tackle message
         newHandler();
 
-        // load preferences
-        SharedPreferences pref = PreferenceManager
-                                    .getDefaultSharedPreferences(context);
-        mDuration = pref.getInt(PREF_DURATION, 1000);
-        int pixelsOfMesh = pref.getInt(PREF_MESH_PIXELS, 10);
-        boolean isAuto = pref.getBoolean(PREF_PAGE_MODE, true);
+        mDuration = 1000;
 
         // create PageFlip
         mPageFlip = new PageFlip(context);
         mPageFlip.setSemiPerimeterRatio(0.8f)
             .setShadowWidthOfFoldEdges(5, 60, 0.3f)
             .setShadowWidthOfFoldBase(5, 80, 0.4f)
-            .setPixelsOfMesh(pixelsOfMesh)
-            .enableAutoPage(isAuto);
+            .setPixelsOfMesh(10)
+            .enableAutoPage(false);
 
         setEGLContextClientVersion(2);
 
         // init others
         mPageNo = 1;
         mDrawLock = new ReentrantLock();
-        mPageRender = new SinglePageRender(context, mPageFlip,
-                                           mHandler, mPageNo);
+        mPageRender = new SinglePageRender(context, mPageFlip, mHandler, mPageNo);
         // configure render
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -94,8 +83,7 @@ public class PageFlipView extends GLSurfaceView implements Renderer {
     public void onFingerDown(float x, float y) {
         // if the animation is going, we should ignore this event to avoid
         // mess drawing on screen
-        if (!mPageFlip.isAnimating() &&
-            mPageFlip.getFirstPage() != null) {
+        if (!mPageFlip.isAnimating() && mPageFlip.getFirstPage() != null) {
             mPageFlip.onFingerDown(x, y);
         }
     }
@@ -118,8 +106,7 @@ public class PageFlipView extends GLSurfaceView implements Renderer {
         else if (mPageFlip.onFingerMove(x, y)) {
             try {
                 mDrawLock.lock();
-                if (mPageRender != null &&
-                    mPageRender.onFingerMove(x, y)) {
+                if (mPageRender != null && mPageRender.onFingerMove(x, y)) {
                     requestRender();
                 }
             }
@@ -140,8 +127,7 @@ public class PageFlipView extends GLSurfaceView implements Renderer {
             mPageFlip.onFingerUp(x, y, mDuration);
             try {
                 mDrawLock.lock();
-                if (mPageRender != null &&
-                    mPageRender.onFingerUp(x, y)) {
+                if (mPageRender != null && mPageRender.onFingerUp(x, y)) {
                     requestRender();
                 }
             }

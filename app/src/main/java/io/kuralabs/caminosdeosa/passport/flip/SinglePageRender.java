@@ -65,8 +65,7 @@ public class SinglePageRender extends PageRender {
         Page page = mPageFlip.getFirstPage();
 
         // 2. handle drawing command triggered from finger moving and animating
-        if (mDrawCommand == DRAW_MOVING_FRAME ||
-            mDrawCommand == DRAW_ANIMATING_FRAME) {
+        if (mDrawCommand == DRAW_MOVING_FRAME || mDrawCommand == DRAW_ANIMATING_FRAME) {
             // is forward flip
             if (mPageFlip.getFlipState() == PageFlipState.FORWARD_FLIP) {
                 // check if second texture of first page is valid, if not,
@@ -75,18 +74,16 @@ public class SinglePageRender extends PageRender {
                     drawPage(mPageNo + 1);
                     page.setSecondTexture(mBitmap);
                 }
-            }
-            // in backward flip, check first texture of first page is valid
-            else if (!page.isFirstTextureSet()) {
+            } else if (!page.isFirstTextureSet()) {
+                // in backward flip, check first texture of first page is valid
                 drawPage(--mPageNo);
                 page.setFirstTexture(mBitmap);
             }
 
             // draw frame for page flip
             mPageFlip.drawFlipFrame();
-        }
-        // draw stationary page without flipping
-        else if (mDrawCommand == DRAW_FULL_PAGE) {
+        } else if (mDrawCommand == DRAW_FULL_PAGE) {
+            // draw stationary page without flipping
             if (!page.isFirstTextureSet()) {
                 drawPage(mPageNo);
                 page.setFirstTexture(mBitmap);
@@ -145,17 +142,16 @@ public class SinglePageRender extends PageRender {
             if (isAnimating) {
                 mDrawCommand = DRAW_ANIMATING_FRAME;
                 return true;
-            }
-            // animation is finished
-            else {
+            } else {
+                // animation is finished
+
                 final PageFlipState state = mPageFlip.getFlipState();
                 // update page number for backward flip
                 if (state == PageFlipState.END_WITH_BACKWARD) {
                     // don't do anything on page number since mPageNo is always
                     // represents the FIRST_TEXTURE no;
-                }
-                // update page number and switch textures for forward flip
-                else if (state == PageFlipState.END_WITH_FORWARD) {
+                } else if (state == PageFlipState.END_WITH_FORWARD) {
+                    // update page number and switch textures for forward flip
                     mPageFlip.getFirstPage().setFirstTextureWithSecond();
                     mPageNo++;
                 }
@@ -203,8 +199,7 @@ public class SinglePageRender extends PageRender {
             float w = p.measureText(firstPage);
             float h = p.getTextSize();
             mCanvas.drawText(firstPage, (width - w) / 2, y + 5 + h, p);
-        }
-        else if (number >= MAX_PAGES) {
+        } else if (number >= MAX_PAGES) {
             String lastPage = "The Last Page";
             p.setTextSize(calcFontSize(16));
             float w = p.measureText(lastPage);
@@ -231,8 +226,7 @@ public class SinglePageRender extends PageRender {
         if (mPageNo > 1) {
             mPageFlip.getFirstPage().setSecondTextureWithFirst();
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
