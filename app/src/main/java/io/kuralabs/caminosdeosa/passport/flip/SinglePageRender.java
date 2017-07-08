@@ -17,6 +17,7 @@ package io.kuralabs.caminosdeosa.passport.flip;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -26,6 +27,8 @@ import android.os.Message;
 import com.eschao.android.widget.pageflip.Page;
 import com.eschao.android.widget.pageflip.PageFlip;
 import com.eschao.android.widget.pageflip.PageFlipState;
+
+import io.kuralabs.caminosdeosa.passport.R;
 
 /**
  * Single page render
@@ -124,7 +127,6 @@ public class SinglePageRender extends PageRender {
         mBitmap = Bitmap.createBitmap((int)page.width(), (int)page.height(),
                                       Bitmap.Config.ARGB_8888);
         mCanvas.setBitmap(mBitmap);
-        LoadBitmapTask.get(mContext).set(width, height, 1);
     }
 
     /**
@@ -177,7 +179,7 @@ public class SinglePageRender extends PageRender {
         p.setFilterBitmap(true);
 
         // 1. draw background bitmap
-        Bitmap background = LoadBitmapTask.get(mContext).getBitmap();
+        Bitmap background = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.p1_480);
         Rect rect = new Rect(0, 0, width, height);
         mCanvas.drawBitmap(background, null, rect, p);
         background.recycle();

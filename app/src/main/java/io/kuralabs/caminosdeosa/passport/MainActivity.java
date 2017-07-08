@@ -15,7 +15,6 @@ import android.support.design.widget.FloatingActionButton;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.integration.android.IntentIntegrator;
 
-import io.kuralabs.caminosdeosa.passport.flip.LoadBitmapTask;
 import io.kuralabs.caminosdeosa.passport.flip.PageFlipView;
 
 public class MainActivity extends AppCompatActivity implements OnGestureListener {
@@ -80,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
     protected void onResume() {
         super.onResume();
 
-        LoadBitmapTask.get(this).start();
         mPageFlipView.onResume();
     }
 
@@ -89,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
         super.onPause();
 
         mPageFlipView.onPause();
-        LoadBitmapTask.get(this).stop();
     }
 
     @Override
