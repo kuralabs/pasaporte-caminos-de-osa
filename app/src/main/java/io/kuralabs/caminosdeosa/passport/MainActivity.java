@@ -3,6 +3,7 @@ package io.kuralabs.caminosdeosa.passport;
 import android.os.Bundle;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -13,9 +14,14 @@ import android.support.design.widget.FloatingActionButton;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import com.vansuita.pickimage.bean.PickResult;
+import com.vansuita.pickimage.dialog.PickImageDialog;
+import com.vansuita.pickimage.listeners.IPickResult;
+import com.vansuita.pickimage.bundle.PickSetup;
+
 import io.kuralabs.caminosdeosa.passport.flip.PageFlipView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IPickResult {
 
     FloatingActionButton addStampButton;
     PageFlipView mPageFlipView;
@@ -58,9 +64,16 @@ public class MainActivity extends AppCompatActivity {
 
         addStampButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
-                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-                integrator.initiateScan();
+                // Pick QR
+                // IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+                // integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+                // integrator.initiateScan();
+
+                // Pick Image
+                PickSetup setup = new PickSetup()
+                    .setSystemDialog(true);
+                PickImageDialog.build(setup).show(MainActivity.this);
+
             }
         });
     }
@@ -106,5 +119,28 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    @Override
+    public void onPickResult(PickResult r) {
+        if (r.getError() == null) {
+            //If you want the Uri.
+            //Mandatory to refresh image from Uri.
+            //getImageView().setImageURI(null);
+
+            //Setting the real returned image.
+            //getImageView().setImageURI(r.getUri());
+
+            //If you want the Bitmap.
+
+            // getImageView().setImageBitmap(r.getBitmap());
+            Toast.makeText(this, r.getPath(), Toast.LENGTH_LONG).show();
+            //Image path
+            //r.getPath();
+        } else {
+            //Handle possible errors
+            //TODO: do what you have to do with r.getError();
+            Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

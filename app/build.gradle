@@ -24,11 +24,15 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    // Floating actions
+    compile 'com.android.support:design:25.2.0'
+    // Page flip
     compile 'com.github.eschao:android-PageFlip:1.0.2'
+    // QR code reading
     compile 'com.journeyapps:zxing-android-embedded:3.5.0@aar'
     compile 'com.google.zxing:core:3.3.0'
+    // Image picker
+    compile 'com.github.jrvansuita:PickImage:2.1.2'
     testCompile 'junit:junit:4.12'
 }
