@@ -48,8 +48,7 @@ public abstract class PageRender implements OnPageFlipListener {
     Handler mHandler;
     PageFlip mPageFlip;
 
-    public PageRender(Context context, PageFlip pageFlip,
-                      Handler handler, int pageNo) {
+    public PageRender(Context context, PageFlip pageFlip, Handler handler, int pageNo) {
         mContext = context;
         mPageFlip = pageFlip;
         mPageNo = pageNo;
