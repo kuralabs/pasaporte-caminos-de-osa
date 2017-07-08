@@ -3,8 +3,6 @@ package io.kuralabs.caminosdeosa.passport;
 import android.os.Bundle;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.view.GestureDetector;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -17,11 +15,10 @@ import com.google.zxing.integration.android.IntentIntegrator;
 
 import io.kuralabs.caminosdeosa.passport.flip.PageFlipView;
 
-public class MainActivity extends AppCompatActivity implements OnGestureListener {
+public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton addStampButton;
     PageFlipView mPageFlipView;
-    GestureDetector mGestureDetector;
     View decorView;
 
     @Override
@@ -56,10 +53,8 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
         passportView.addView(passportWidgets);
 
         setContentView(passportView);
-        mGestureDetector = new GestureDetector(this, this);
 
         decorView = getWindow().getDecorView();
-
 
         addStampButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -93,40 +88,23 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
+        final int action = event.getActionMasked();
+
+        if (action == MotionEvent.ACTION_UP) {
             mPageFlipView.onFingerUp(event.getX(), event.getY());
             return true;
         }
 
-        return mGestureDetector.onTouchEvent(event);
-    }
+        if (action == MotionEvent.ACTION_DOWN) {
+            mPageFlipView.onFingerDown(event.getX(), event.getY());
+            return true;
+        }
 
-    @Override
-    public boolean onDown(MotionEvent e) {
-        mPageFlipView.onFingerDown(e.getX(), e.getY());
-        return true;
-    }
+        if (action == MotionEvent.ACTION_MOVE) {
+            mPageFlipView.onFingerMove(event.getX(), event.getY());
+            return true;
+        }
 
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        mPageFlipView.onFingerMove(e2.getX(), e2.getY());
-        return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-    }
-
-    public boolean onSingleTapUp(MotionEvent e) {
         return false;
     }
 }
