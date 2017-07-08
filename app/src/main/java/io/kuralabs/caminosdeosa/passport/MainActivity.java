@@ -15,6 +15,9 @@ import android.support.design.widget.FloatingActionButton;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import io.kuralabs.caminosdeosa.passport.flip.LoadBitmapTask;
+import io.kuralabs.caminosdeosa.passport.flip.PageFlipView;
+
 public class MainActivity extends AppCompatActivity implements OnGestureListener {
 
     FloatingActionButton addStampButton;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.kuralabs.caminosdeosa.passport;
+package io.kuralabs.caminosdeosa.passport.flip;
 
 import android.content.Context;
 import android.graphics.Bitmap;

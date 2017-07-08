@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.kuralabs.caminosdeosa.passport;
+package io.kuralabs.caminosdeosa.passport.flip;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -22,7 +22,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.Toast;
 
 import com.eschao.android.widget.pageflip.Page;
 import com.eschao.android.widget.pageflip.PageFlip;
