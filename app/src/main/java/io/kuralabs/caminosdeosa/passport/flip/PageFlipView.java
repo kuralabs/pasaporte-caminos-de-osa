@@ -68,7 +68,7 @@ public class PageFlipView extends GLSurfaceView implements Renderer {
         // init others
         mPageNo = 1;
         mDrawLock = new ReentrantLock();
-        mPageRender = new SinglePageRender(context, mPageFlip, mHandler, mPageNo);
+        mPageRender = new PageRender(context, mPageFlip, mHandler, mPageNo);
         // configure render
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
