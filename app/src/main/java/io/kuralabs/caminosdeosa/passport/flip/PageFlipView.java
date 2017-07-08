@@ -40,7 +40,6 @@ public class PageFlipView extends GLSurfaceView implements Renderer {
 
     private final static String TAG = "PageFlipView";
 
-    int mPageNo;
     int mDuration;
     Handler mHandler;
     PageFlip mPageFlip;
@@ -62,13 +61,11 @@ public class PageFlipView extends GLSurfaceView implements Renderer {
             .setShadowWidthOfFoldBase(5, 80, 0.4f)
             .setPixelsOfMesh(10)
             .enableAutoPage(false);
-
         setEGLContextClientVersion(2);
 
         // init others
-        mPageNo = 1;
         mDrawLock = new ReentrantLock();
-        mPageRender = new PageRender(context, mPageFlip, mHandler, mPageNo);
+        mPageRender = new PageRender(context, mPageFlip, mHandler);
         // configure render
         setRenderer(this);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
@@ -97,13 +94,17 @@ public class PageFlipView extends GLSurfaceView implements Renderer {
     public void onFingerMove(float x, float y) {
         if (mPageFlip.isAnimating()) {
             // nothing to do during animating
+            return;
         }
-        else if (mPageFlip.canAnimate(x, y)) {
+
+        if (mPageFlip.canAnimate(x, y)) {
             // if the point is out of current page, try to start animating
             onFingerUp(x, y);
+            return;
         }
+
         // move page by finger
-        else if (mPageFlip.onFingerMove(x, y)) {
+        if (mPageFlip.onFingerMove(x, y)) {
             try {
                 mDrawLock.lock();
                 if (mPageRender != null && mPageRender.onFingerMove(x, y)) {

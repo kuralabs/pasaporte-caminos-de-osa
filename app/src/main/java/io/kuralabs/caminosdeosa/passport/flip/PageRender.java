@@ -57,10 +57,10 @@ public class PageRender implements OnPageFlipListener {
     Handler mHandler;
     PageFlip mPageFlip;
 
-    public PageRender(Context context, PageFlip pageFlip, Handler handler, int pageNo) {
+    public PageRender(Context context, PageFlip pageFlip, Handler handler) {
         mContext = context;
         mPageFlip = pageFlip;
-        mPageNo = pageNo;
+        mPageNo = 1;
         mDrawCommand = DRAW_FULL_PAGE;
         mCanvas = new Canvas();
         mPageFlip.setListener(this);
@@ -202,34 +202,34 @@ public class PageRender implements OnPageFlipListener {
      * will be called in main thread
      *
      * @param what event type
-     * @return ture if need render again
+     * @return true if need render again
      */
     public boolean onEndedDrawing(int what) {
-        if (what == DRAW_ANIMATING_FRAME) {
-            boolean isAnimating = mPageFlip.animating();
-            // continue animating
-            if (isAnimating) {
-                mDrawCommand = DRAW_ANIMATING_FRAME;
-                return true;
-            } else {
-                // animation is finished
-
-                final PageFlipState state = mPageFlip.getFlipState();
-                // update page number for backward flip
-                if (state == PageFlipState.END_WITH_BACKWARD) {
-                    // don't do anything on page number since mPageNo is always
-                    // represents the FIRST_TEXTURE no;
-                } else if (state == PageFlipState.END_WITH_FORWARD) {
-                    // update page number and switch textures for forward flip
-                    mPageFlip.getFirstPage().setFirstTextureWithSecond();
-                    mPageNo++;
-                }
-
-                mDrawCommand = DRAW_FULL_PAGE;
-                return true;
-            }
+        if (what != DRAW_ANIMATING_FRAME) {
+            return false;
         }
-        return false;
+
+        // continue animating
+        if (mPageFlip.animating()) {
+            mDrawCommand = DRAW_ANIMATING_FRAME;
+            return true;
+        }
+
+        // animation is finished
+        final PageFlipState state = mPageFlip.getFlipState();
+
+        // update page number for backward flip
+        if (state == PageFlipState.END_WITH_BACKWARD) {
+            // don't do anything on page number since mPageNo is always
+            // represents the FIRST_TEXTURE no;
+        } else if (state == PageFlipState.END_WITH_FORWARD) {
+            // update page number and switch textures for forward flip
+            mPageFlip.getFirstPage().setFirstTextureWithSecond();
+            mPageNo++;
+        }
+
+        mDrawCommand = DRAW_FULL_PAGE;
+        return true;
     }
 
     /**
@@ -281,9 +281,8 @@ public class PageRender implements OnPageFlipListener {
         if (mPageNo > 1) {
             mPageFlip.getFirstPage().setSecondTextureWithFirst();
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 }
