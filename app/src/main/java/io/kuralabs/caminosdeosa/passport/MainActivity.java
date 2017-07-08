@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
     FloatingActionButton addStampButton;
     PageFlipView mPageFlipView;
     GestureDetector mGestureDetector;
+    View decorView;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -57,14 +58,8 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
         setContentView(passportView);
         mGestureDetector = new GestureDetector(this, this);
 
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-            View.SYSTEM_UI_FLAG_FULLSCREEN |
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-            View.SYSTEM_UI_FLAG_IMMERSIVE |
-            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        );
+        decorView = getWindow().getDecorView();
+
 
         addStampButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -78,6 +73,13 @@ public class MainActivity extends AppCompatActivity implements OnGestureListener
     @Override
     protected void onResume() {
         super.onResume();
+        decorView.setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_FULLSCREEN |
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
+            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        );
 
         mPageFlipView.onResume();
     }
