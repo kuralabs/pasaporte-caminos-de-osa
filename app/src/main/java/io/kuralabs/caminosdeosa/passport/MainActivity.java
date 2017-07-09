@@ -20,13 +20,13 @@ import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 
-import io.kuralabs.caminosdeosa.passport.flip.PageFlipView;
+import io.kuralabs.caminosdeosa.passport.flip.BookView;
 
 public class MainActivity extends AppCompatActivity implements IPickResult {
 
     FloatingActionButton menuFab, editFab, shareFab, addPhotoFab, addStampFab;
     LinearLayout fabLayouts[], editFabLayout, shareFabLayout, addPhotoFabLayout, addStampFabLayout;
-    PageFlipView pageFlipView;
+    BookView bookView;
     View decorView;
 
     View fabOverlay;
@@ -50,14 +50,13 @@ public class MainActivity extends AppCompatActivity implements IPickResult {
         super.onCreate(savedInstanceState);
 
         decorView = getWindow().getDecorView();
-
-        pageFlipView = new PageFlipView(this);
-
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View passportWidgets= inflater.inflate(R.layout.passport_widgets, null, false);
+        bookView = new BookView(this, new Passport(this));
 
         FrameLayout passportView = new FrameLayout(this);
-        passportView.addView(pageFlipView);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View passportWidgets = inflater.inflate(R.layout.passport_widgets, null, false);
+
+        passportView.addView(bookView);
         passportView.addView(passportWidgets);
 
         setContentView(passportView);
@@ -191,36 +190,19 @@ public class MainActivity extends AppCompatActivity implements IPickResult {
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         );
 
-        pageFlipView.onResume();
+        bookView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        pageFlipView.onPause();
+        bookView.onPause();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        final int action = event.getActionMasked();
-
-        if (action == MotionEvent.ACTION_UP) {
-            pageFlipView.onFingerUp(event.getX(), event.getY());
-            return true;
-        }
-
-        if (action == MotionEvent.ACTION_DOWN) {
-            pageFlipView.onFingerDown(event.getX(), event.getY());
-            return true;
-        }
-
-        if (action == MotionEvent.ACTION_MOVE) {
-            pageFlipView.onFingerMove(event.getX(), event.getY());
-            return true;
-        }
-
-        return false;
+        return bookView.onTouchEvent(event);
     }
 
     @Override
