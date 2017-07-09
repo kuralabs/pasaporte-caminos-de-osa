@@ -24,6 +24,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     BookView bookView;
+    Passport passport;
     View decorView;
 
     @Override
@@ -31,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         decorView = getWindow().getDecorView();
-        bookView = new BookView(this, new Passport(this));
+        passport = new Passport(this);
+        bookView = new BookView(this, passport);
 
         FrameLayout passportView = new FrameLayout(this);
         LayoutInflater inflater = LayoutInflater.from(this);

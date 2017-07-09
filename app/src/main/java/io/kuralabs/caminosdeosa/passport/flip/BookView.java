@@ -14,6 +14,7 @@ import com.eschao.android.widget.pageflip.Page;
 import com.eschao.android.widget.pageflip.PageFlip;
 import com.eschao.android.widget.pageflip.PageFlipException;
 import com.eschao.android.widget.pageflip.PageFlipState;
+import com.vansuita.pickimage.bundle.PickSetup;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -83,15 +84,28 @@ public class BookView extends GLSurfaceView implements Renderer {
                 if (pageFlip.getFlipState() == PageFlipState.FORWARD_FLIP) {
                     // Check if second texture of first page is valid, if not, create new one.
                     if (!page.isSecondTextureSet()) {
-                        Bitmap bitmap = bookManager.getPage(pageNo + 1);
-                        page.setSecondTexture(bitmap);
+                        try {
+                            bookManager.getLock().lock();
+                            Bitmap bitmap = bookManager.getPage(pageNo + 1);
+                            page.setSecondTexture(bitmap);
+                        } finally {
+                            bookManager.getLock().unlock();
+                        }
                     }
 
-                    // Is backward flip
+                // Is backward flip
                 } else if (!page.isFirstTextureSet()) {
                     // In backward flip, check first texture of first page is valid.
-                    Bitmap bitmap = bookManager.getPage(--pageNo);
-                    page.setFirstTexture(bitmap);
+                    try {
+                        bookManager.getLock().lock();
+                        --pageNo;
+                        bookManager.setPageNo(pageNo);
+                        Bitmap bitmap = bookManager.getPage(pageNo);
+                        page.setFirstTexture(bitmap);
+                        Log.d("PageNo", Integer.toString(pageNo));
+                    } finally {
+                        bookManager.getLock().unlock();
+                    }
                 }
 
                 // Draw frame for page flip.
@@ -100,8 +114,13 @@ public class BookView extends GLSurfaceView implements Renderer {
             } else if (drawCommandCache == DRAW_FULL_PAGE) {
                 // Draw stationary page without flipping.
                 if (!page.isFirstTextureSet()) {
-                    Bitmap bitmap = bookManager.getPage(pageNo);
-                    page.setFirstTexture(bitmap);
+                    try {
+                        bookManager.getLock().lock();
+                        Bitmap bitmap = bookManager.getPage(pageNo);
+                        page.setFirstTexture(bitmap);
+                    } finally {
+                        bookManager.getLock().unlock();
+                    }
                 }
 
                 pageFlip.drawPageFrame();
@@ -129,8 +148,15 @@ public class BookView extends GLSurfaceView implements Renderer {
             } else if (state == PageFlipState.END_WITH_FORWARD) {
                 // update page number and switch textures for forward flip
                 pageFlip.getFirstPage().setFirstTextureWithSecond();
-                pageNo++;
-                Log.d("FOO", Integer.toString(pageNo));
+
+                try {
+                    bookManager.getLock().lock();
+                    pageNo++;
+                    bookManager.setPageNo(pageNo);
+                    Log.d("PageNo", Integer.toString(pageNo));
+                } finally {
+                    bookManager.getLock().unlock();
+                }
             }
 
             drawCommand = DRAW_FULL_PAGE;
