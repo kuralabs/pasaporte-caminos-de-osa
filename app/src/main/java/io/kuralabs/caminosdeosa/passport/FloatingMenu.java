@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class FloatingMenu implements IPickResult {
 
-    LinearLayout editFabLayout, shareFabLayout, addPhotoFabLayout, addStampFabLayout;
+    LinearLayout menuFabLayout, editFabLayout, shareFabLayout, addPhotoFabLayout, addStampFabLayout;
     FloatingActionButton menuFab;
     Map<String, String[]> floatingMenuConfig;
     Map<String, LinearLayout> floatingLayouts;
@@ -28,10 +28,14 @@ public class FloatingMenu implements IPickResult {
     View fabOverlay;
 
     //TODO: Pull the current page from the actual PageFlip component
-    String currentPage = "stamps_empty";
+    String currentPage = "cover";
 
     public FloatingMenu setCurrentPage(String page) {
         this.currentPage = page;
+
+        boolean hideMenuButton = page.equals("cover") || page.equals("manifesto");
+        menuFabLayout.setVisibility(hideMenuButton? View.GONE : View.VISIBLE);
+
         return this;
     }
 
@@ -91,6 +95,7 @@ public class FloatingMenu implements IPickResult {
     }
 
     public void onOpenMenuClick(FloatingActionButton button) {
+        menuFabLayout = floatingLayouts.get("menu");
         menuFab = button;
         button.setOnClickListener(new View.OnClickListener() {
             @Override
