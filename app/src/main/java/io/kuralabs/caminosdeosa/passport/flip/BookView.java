@@ -145,6 +145,9 @@ public class BookView extends GLSurfaceView implements Renderer {
             // update page number for backward flip
             if (state == PageFlipState.END_WITH_BACKWARD) {
                 Log.d("END_WITH_BACKWARD", Integer.toString(pageNo));
+                // FIXME: Just needs to invalidate the second texture
+                page.setSecondTextureWithFirst();
+                page.setFirstTextureWithSecond();
                 try {
                     bookManager.getLock().lock();
                     pageNo--;
@@ -157,7 +160,6 @@ public class BookView extends GLSurfaceView implements Renderer {
             } else if (state == PageFlipState.END_WITH_FORWARD) {
                 Log.d("END_WITH_FORWARD", "setFirstTextureWithSecond: " + Integer.toString(pageNo));
                 page.setFirstTextureWithSecond();
-
                 try {
                     bookManager.getLock().lock();
                     pageNo++;
