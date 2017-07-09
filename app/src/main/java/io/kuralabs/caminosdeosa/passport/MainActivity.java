@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         floatingButtons.put("add", (LinearLayout) findViewById(R.id.addStampFabLayout));
         floatingButtons.put("photo", (LinearLayout) findViewById(R.id.addPhotoFabLayout));
         floatingButtons.put("edit", (LinearLayout) findViewById(R.id.editFabLayout));
-        floatingButtons.put("menu", (LinearLayout) findViewById(R.id.menuFabLayout));
 
         menu = new FloatingMenu(this, floatingButtons);
         menu.onShareClick((FloatingActionButton) findViewById(R.id.shareFab));

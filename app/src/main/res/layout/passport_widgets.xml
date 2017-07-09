@@ -104,8 +104,7 @@
         android:clipToPadding="false"
         android:padding="@dimen/standard_12"
         android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_gravity="bottom|end"
-        android:visibility="gone">
+        android:layout_gravity="bottom|end">
 
 
         <android.support.design.widget.FloatingActionButton
@@ -114,7 +113,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             app:srcCompat="@drawable/ic_more"
-            app:fabSize="normal"/>
+            app:fabSize="normal"
+            android:visibility="gone"/>
     </LinearLayout>
 
 
