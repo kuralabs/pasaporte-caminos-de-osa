@@ -34,7 +34,18 @@ public class Passport implements BookManager {
         // First page
         // FIXME: We have hardwired 10 pages
         for (int i = 0; i < 5; i++) {
-            pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.p1_480));
+            if (i == 0) {
+                // Add cover
+                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.cover));
+            } else if (i == 1) {
+                // Add personal data
+                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.background));
+            } else if (i == 2) {
+                // Add manifesto
+                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.manifesto));
+            } else {
+                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.background));
+            }
         }
     }
 
