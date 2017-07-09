@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements IPickResult {
         String contents = result.getContents();
 
         if (contents == null) {
-            Toast.makeText(this, "Invalid QR Code", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -171,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements IPickResult {
     @Override
     public void onPickResult(PickResult r) {
         if (r.getError() != null) {
-            Toast.makeText(this, r.getPath(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, r.getError().toString(), Toast.LENGTH_LONG).show();
             return;
         }
         Bitmap photo = r.getBitmap();

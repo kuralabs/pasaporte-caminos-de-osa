@@ -1,12 +1,16 @@
 package io.kuralabs.caminosdeosa.passport;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.concurrent.locks.ReentrantLock;
 
+import android.graphics.Color;
 import android.os.Handler;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Message;
 import android.util.Log;
 
@@ -32,25 +36,17 @@ public class Passport implements BookManager {
         this.listeners = new ArrayList<>();
         this.pages = new ArrayList<>();
 
-        // First page
-        // FIXME: We have hardwired 10 pages
-        for (int i = 0; i < 5; i++) {
-            if (i == 0) {
-                // Add cover
-                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.cover));
-            } else if (i == 1) {
-                // Add personal data
-                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.profile));
-            } else if (i == 2) {
-                // Add manifesto
-                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.manifesto));
-            } else if (i == 3) {
-                // Add manifesto second page
-                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.manifesto2));
-            } else {
-                pages.add(createPage());
-            }
-        }
+        // Create pages
+        // Add cover
+        pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.cover));
+        // Add personal data
+        pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.profile));
+        // Add manifesto
+        pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.manifesto));
+        // Add manifesto second page
+        pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.manifesto2));
+        // Empty page
+        pages.add(createPage());
     }
 
     @Override
@@ -106,7 +102,9 @@ public class Passport implements BookManager {
         Bitmap basePage = BitmapFactory.decodeResource(
             context.getResources(), R.drawable.background
         );
-        return basePage.copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap copy = basePage.copy(Bitmap.Config.ARGB_8888, true);
+        basePage.recycle();
+        return copy;
     }
 
     /**
@@ -141,9 +139,13 @@ public class Passport implements BookManager {
     }
 
     @Override
-    public BookManager addOnPageChangeListener(Handler listener) {
+    public Passport addOnPageChangeListener(Handler listener) {
         this.listeners.add(listener);
         return this;
+    }
+
+    protected int calcFontSize(int size) {
+        return (int)(size * context.getResources().getDisplayMetrics().scaledDensity);
     }
 
     @Override
@@ -174,7 +176,31 @@ public class Passport implements BookManager {
             }
 
             // Paint stamp
-            canvas.drawBitmap(stampBitmap, 0, 0, null);
+            canvas.drawBitmap(
+                stampBitmap,
+                (buffer.getWidth() / 2) - (stampBitmap.getWidth() / 2),
+                (buffer.getHeight() / 2) + (stampBitmap.getHeight() / 2),
+                null
+            );
+
+            // Add timestamp
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = df.format(c.getTime());
+
+            int fontSize = calcFontSize(32);
+            Paint p = new Paint();
+
+            p.setFilterBitmap(true);
+            p.setColor(Color.WHITE);
+            p.setStrokeWidth(1);
+            p.setAntiAlias(true);
+            p.setShadowLayer(5.0f, 8.0f, 8.0f, Color.BLACK);
+            p.setTextSize(fontSize);
+            String text = formattedDate;
+            float textWidth = p.measureText(text);
+            float y = buffer.getHeight() - p.getTextSize() - 100;
+            canvas.drawText(text, (buffer.getWidth() - textWidth) / 2, y, p);
 
             // Copy third buffer into second
             try {
