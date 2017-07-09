@@ -15,5 +15,6 @@ public interface BookManager extends OnPageFlipListener {
     Bitmap createPage(); // Requires cleanup after
 
     BookManager setPageNo(int pageNo); // Requires locking
+    int getPageNo(); // locking is recommended
     BookManager addOnPageChangeListener(Handler listener);
 }

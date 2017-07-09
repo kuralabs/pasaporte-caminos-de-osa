@@ -122,6 +122,11 @@ public class Passport implements BookManager {
     }
 
     @Override
+    public int getPageNo() {
+        return pageNo;
+    }
+
+    @Override
     public BookManager addOnPageChangeListener(Handler listener) {
         this.listeners.add(listener);
         return this;

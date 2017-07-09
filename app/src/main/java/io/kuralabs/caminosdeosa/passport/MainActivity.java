@@ -23,10 +23,14 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    BookView bookView;
-    Handler handler;
-    Passport passport;
     View decorView;
+
+    // Passport
+    Passport passport;
+    BookView bookView;
+
+    // Menu
+    Handler handler;
     FloatingMenu menu;
 
     @Override
@@ -34,18 +38,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         decorView = getWindow().getDecorView();
+
         passport = new Passport(this);
         bookView = new BookView(this, passport);
 
-        FrameLayout passportView = new FrameLayout(this);
+        FrameLayout rootView = new FrameLayout(this);
+
+        // Add passport view
+        rootView.addView(bookView);
+
+        // Load and add menu widgets
         LayoutInflater inflater = LayoutInflater.from(this);
         View passportWidgets = inflater.inflate(R.layout.passport_widgets, null, false);
+        rootView.addView(passportWidgets);
 
-        passportView.addView(bookView);
-        passportView.addView(passportWidgets);
-
-        setContentView(passportView);
-
+        // Initialize the menu and connect the page change notification
         initMenu();
 
         handler = new Handler() {
@@ -69,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         passport.addOnPageChangeListener(handler);
+
+        // Set the view for this activity
+        setContentView(rootView);
     }
 
     @Override
