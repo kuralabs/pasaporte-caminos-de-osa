@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -70,11 +71,19 @@ public class MainActivity extends AppCompatActivity {
                     page = "data";
                 } else if (pageNo == 2) {
                     page = "manifesto";
-                } else if (pageNo < pages) {
+                } else if (pageNo < pages - 1) {
                     page = "stamps";
                 } else {
                     page = "stamps_empty";
                 }
+
+                Log.d(
+                    "MainActivity",
+                    "pageNo: " + Integer.toString(pageNo) +
+                    " , pages: " + Integer.toString(pages) +
+                    " , page: " + page
+                );
+
                 menu.setCurrentPage(page);
             }
         };
