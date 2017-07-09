@@ -1,5 +1,6 @@
 package io.kuralabs.caminosdeosa.passport.flip;
 
+import android.os.Handler;
 import android.graphics.Bitmap;
 
 import com.eschao.android.widget.pageflip.OnPageFlipListener;
@@ -14,5 +15,5 @@ public interface BookManager extends OnPageFlipListener {
     Bitmap createPage(); // Requires cleanup after
 
     BookManager setPageNo(int pageNo); // Requires locking
-    int getPageNo();
+    BookManager addOnPageChangeListener(Handler listener);
 }

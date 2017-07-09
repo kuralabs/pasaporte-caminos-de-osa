@@ -1,7 +1,9 @@
 package io.kuralabs.caminosdeosa.passport;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.content.Intent;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,8 +16,6 @@ import android.support.design.widget.FloatingActionButton;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.integration.android.IntentIntegrator;
 
-import com.vansuita.pickimage.bean.PickResult;
-
 import io.kuralabs.caminosdeosa.passport.flip.BookView;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +24,10 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     BookView bookView;
+    Handler handler;
     Passport passport;
     View decorView;
+    FloatingMenu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(passportView);
 
         initMenu();
+
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+                int pageNo = msg.arg1;
+                int pages = msg.arg2;
+                String page;
+
+                if (pageNo == 0) {
+                    page = "cover";
+                } else if (pageNo == 1) {
+                    page = "data";
+                } else if (pageNo == 2) {
+                    page = "manifesto";
+                } else if (pageNo < pages) {
+                    page = "stamps";
+                } else {
+                    page = "stamps_empty";
+                }
+                menu.setCurrentPage(page);
+            }
+        };
+        passport.addOnPageChangeListener(handler);
     }
 
     @Override
@@ -95,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         floatingButtons.put("photo", (LinearLayout) findViewById(R.id.addPhotoFabLayout));
         floatingButtons.put("edit", (LinearLayout) findViewById(R.id.editFabLayout));
 
-        FloatingMenu menu = new FloatingMenu(this, floatingButtons);
+        menu = new FloatingMenu(this, floatingButtons);
         menu.onShareClick((FloatingActionButton) findViewById(R.id.shareFab));
         menu.onEditClick((FloatingActionButton) findViewById(R.id.editFab));
         menu.onAddPhotoClick((FloatingActionButton) findViewById(R.id.addPhotoFab), this);

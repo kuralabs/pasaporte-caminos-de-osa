@@ -2,10 +2,12 @@ package io.kuralabs.caminosdeosa.passport;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import android.os.Handler;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.os.Message;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -18,18 +20,22 @@ public class Passport implements BookManager {
     ReentrantLock pagesLock;
 
     Context context;
-    ArrayList<Bitmap> pages = new ArrayList<>();
+    ArrayList<Handler> listeners;
+    ArrayList<Bitmap> pages;
 
     public Passport(Context context) {
         pageNo = 0;
         pagesLock = new ReentrantLock();
 
         this.context = context;
+        this.listeners = new ArrayList<>();
+        this.pages = new ArrayList<>();
 
         // First page
-        pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.p1_480));
-        // FIXME: Do not hardwire two pages
-        pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.p1_480));
+        // FIXME: We have hardwired 10 pages
+        for (int i = 0; i < 5; i++) {
+            pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.p1_480));
+        }
     }
 
     @Override
@@ -104,11 +110,20 @@ public class Passport implements BookManager {
                 pages.add(createPage());
             }
         }
+
+        // Notify listeners
+        for (Handler h : listeners) {
+            Message msg = Message.obtain();
+            msg.arg1 = pageNo;
+            msg.arg2 = pages.size();
+            h.sendMessage(msg);
+        }
         return this;
     }
 
     @Override
-    public int getPageNo() {
-        return this.pageNo;
+    public BookManager addOnPageChangeListener(Handler listener) {
+        this.listeners.add(listener);
+        return this;
     }
 }

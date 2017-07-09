@@ -30,6 +30,11 @@ public class FloatingMenu implements IPickResult {
     //TODO: Pull the current page from the actual PageFlip component
     String currentPage = "stamps_empty";
 
+    public FloatingMenu setCurrentPage(String page) {
+        this.currentPage = page;
+        return this;
+    }
+
     boolean isMenuOpen = false;
 
     int floatingButtonsPosition[] = {
