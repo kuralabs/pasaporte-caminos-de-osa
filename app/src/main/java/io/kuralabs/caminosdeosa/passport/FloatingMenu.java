@@ -149,7 +149,7 @@ public class FloatingMenu {
         floatingMenuConfig.put("stamps_empty", new String[]{ "add" });
     }
 
-    private void showFabMenu(String[] actions) {
+    public void showFabMenu(String[] actions) {
         isMenuOpen = true;
 
         if (actions != null) {
@@ -165,7 +165,7 @@ public class FloatingMenu {
         }
     }
 
-    private void hideFabMenu() {
+    public void hideFabMenu() {
         isMenuOpen = false;
 
         fabOverlay.setVisibility(View.GONE);

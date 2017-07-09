@@ -163,7 +163,9 @@ public class MainActivity extends AppCompatActivity implements IPickResult {
         }
 
         String stamp = contents.substring("cdo://".length());
+        menu.hideFabMenu();
         passport.drawStamp(stamp);
+        bookView.requestRender();
     }
 
     @Override
@@ -173,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements IPickResult {
             return;
         }
         Bitmap photo = r.getBitmap();
+        menu.hideFabMenu();
         passport.drawPhoto(photo);
+        bookView.requestRender();
     }
 }

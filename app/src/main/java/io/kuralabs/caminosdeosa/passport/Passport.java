@@ -48,7 +48,7 @@ public class Passport implements BookManager {
                 // Add manifesto second page
                 pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.manifesto2));
             } else {
-                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.background));
+                pages.add(createPage());
             }
         }
     }
@@ -98,13 +98,15 @@ public class Passport implements BookManager {
 
         Canvas canvas = new Canvas(pages.get(pageNo));
         canvas.drawBitmap(page, 0, 0, null);
-        // page.recycle();
         return this;
     }
 
     @Override
     public Bitmap createPage() {
-        return Bitmap.createBitmap(600, 600, Bitmap.Config.ARGB_8888);
+        Bitmap basePage = BitmapFactory.decodeResource(
+            context.getResources(), R.drawable.background
+        );
+        return basePage.copy(Bitmap.Config.ARGB_8888, true);
     }
 
     /**
@@ -116,15 +118,12 @@ public class Passport implements BookManager {
      */
     @Override
     public Passport setPageNo(int pageNo) {
-        this.pageNo = pageNo;
-        int currentSize = pages.size();
 
-        // Create pages on the fly
-        if (pageNo >= currentSize) {
-            for (int i = 0; i <= (currentSize - pageNo); i++) {
-                pages.add(createPage());
-            }
+        if (pageNo < 0 || pageNo >= pages.size()) {
+            throw new InvalidParameterException("Invalid page number " + Integer.toString(pageNo));
         }
+
+        this.pageNo = pageNo;
 
         // Notify listeners
         for (Handler h : listeners) {
@@ -149,8 +148,49 @@ public class Passport implements BookManager {
 
     @Override
     public void drawStamp(String stamp) {
-        // FIXME: Draw stamp in canvas here
         Log.d("Passport", "Got stamp: " + stamp);
+
+        // Search for 'stamp' resource
+        Bitmap stampBitmap = BitmapFactory.decodeResource(
+            context.getResources(),
+            context.getResources().getIdentifier(
+                stamp, "drawable",  context.getPackageName()
+            )
+        );
+
+        // Create temporal buffer
+        int currentPageNo = pageNo;
+        Bitmap buffer = null;
+        try {
+            buffer = createPage();
+            Canvas canvas = new Canvas(buffer);
+
+            // Copy second buffer into third
+            try {
+                pagesLock.lock();
+                canvas.drawBitmap(pages.get(currentPageNo), 0, 0, null);
+            } finally {
+                pagesLock.unlock();
+            }
+
+            // Paint stamp
+            canvas.drawBitmap(stampBitmap, 0, 0, null);
+
+            // Copy third buffer into second
+            try {
+                pagesLock.lock();
+                setPage(currentPageNo, buffer);
+                pages.add(createPage());
+                setPageNo(currentPageNo); // Trigger listeners
+            } finally {
+                pagesLock.unlock();
+            }
+
+        } finally {
+            if (buffer != null) {
+                buffer.recycle();
+            }
+        }
     }
 
     @Override
