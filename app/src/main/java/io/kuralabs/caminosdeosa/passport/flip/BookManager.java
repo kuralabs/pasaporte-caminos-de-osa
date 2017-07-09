@@ -9,10 +9,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public interface BookManager extends OnPageFlipListener {
     ReentrantLock getLock();
 
-    Bitmap getPage(int pageNo);
-    BookManager setPage(int pageNo, Bitmap page);
-    Bitmap createPage();
+    Bitmap getPage(int pageNo); // Requires locking
+    BookManager setPage(int pageNo, Bitmap page); // Requires locking
+    Bitmap createPage(); // Requires cleanup after
 
-    BookManager setPageNo(int pageNo);
+    BookManager setPageNo(int pageNo); // Requires locking
     int getPageNo();
 }

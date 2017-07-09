@@ -9,12 +9,10 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.view.MotionEvent;
 import android.util.Log;
 
-
 import com.eschao.android.widget.pageflip.Page;
 import com.eschao.android.widget.pageflip.PageFlip;
 import com.eschao.android.widget.pageflip.PageFlipException;
 import com.eschao.android.widget.pageflip.PageFlipState;
-import com.vansuita.pickimage.bundle.PickSetup;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;

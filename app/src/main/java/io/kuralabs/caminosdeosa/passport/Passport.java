@@ -55,7 +55,7 @@ public class Passport implements BookManager {
      */
     @Override
     public Bitmap getPage(int pageNo) {
-        if (pageNo < 0 || pageNo > pages.size()) {
+        if (pageNo < 0 || pageNo >= pages.size()) {
             throw new InvalidParameterException("Invalid page number " + Integer.toString(pageNo));
         }
         return pages.get(pageNo);
@@ -71,7 +71,7 @@ public class Passport implements BookManager {
      */
     @Override
     public Passport setPage(int pageNo, Bitmap page) {
-        if (pageNo < 0 || pageNo > pages.size()) {
+        if (pageNo < 0 || pageNo >= pages.size()) {
             throw new InvalidParameterException("Invalid page number " + Integer.toString(pageNo));
         }
 
@@ -99,8 +99,8 @@ public class Passport implements BookManager {
         int currentSize = pages.size();
 
         // Create pages on the fly
-        if (pageNo > currentSize) {
-            for (int i = 0; i < (currentSize - pageNo); i++) {
+        if (pageNo >= currentSize) {
+            for (int i = 0; i <= (currentSize - pageNo); i++) {
                 pages.add(createPage());
             }
         }
