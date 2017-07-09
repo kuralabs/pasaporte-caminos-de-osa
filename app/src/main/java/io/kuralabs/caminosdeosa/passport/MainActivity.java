@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 if (pageNo == 0) {
                     page = "cover";
                 } else if (pageNo == 1) {
-                    page = "data";
+                    page = "profile";
                 } else if (pageNo == 2) {
                     page = "manifesto";
                 } else if (pageNo == 3) {

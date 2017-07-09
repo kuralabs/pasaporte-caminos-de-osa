@@ -145,7 +145,7 @@ public class FloatingMenu implements IPickResult {
     private void setMenuConfig() {
         floatingMenuConfig = new HashMap<String, String[]>();
         floatingMenuConfig.put("cover", null);
-        floatingMenuConfig.put("data", new String[]{ "edit" });
+        floatingMenuConfig.put("profile", new String[]{ "edit" });
         floatingMenuConfig.put("manifesto", null);
         floatingMenuConfig.put("stamps", new String[]{ "share", "photo" });
         floatingMenuConfig.put("stamps_empty", new String[]{ "add" });
