@@ -26,6 +26,7 @@ public class FloatingMenu implements IPickResult {
     Map<String, String[]> floatingMenuConfig;
     Map<String, LinearLayout> floatingLayouts;
     boolean isMenuOpen = false;
+    boolean isAnimating = false;
     Context context;
     View fabOverlay;
 
@@ -62,6 +63,9 @@ public class FloatingMenu implements IPickResult {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isAnimating) {
+                    return;
+                }
             }
         });
     }
@@ -71,6 +75,9 @@ public class FloatingMenu implements IPickResult {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isAnimating) {
+                    return;
+                }
             }
         });
     }
@@ -80,6 +87,9 @@ public class FloatingMenu implements IPickResult {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isAnimating) {
+                    return;
+                }
                 IntentIntegrator integrator = new IntentIntegrator(activity);
                 integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
                 integrator.initiateScan();
@@ -92,6 +102,9 @@ public class FloatingMenu implements IPickResult {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isAnimating) {
+                    return;
+                }
                 // Pick Image
                 PickSetup setup = new PickSetup().setSystemDialog(true);
                 PickImageDialog.build(setup).show((FragmentActivity) activity);
@@ -104,6 +117,9 @@ public class FloatingMenu implements IPickResult {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isAnimating) {
+                    return;
+                }
                 if (!isMenuOpen) {
                     showFabMenu(floatingMenuConfig.get(currentPage));
                 } else {
@@ -118,6 +134,9 @@ public class FloatingMenu implements IPickResult {
         overlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isAnimating) {
+                    return;
+                }
                 hideFabMenu();
             }
         });
@@ -159,11 +178,12 @@ public class FloatingMenu implements IPickResult {
         editFabLayout.animate().translationY(0).setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
-
+                isAnimating = true;
             }
 
             @Override
             public void onAnimationEnd(Animator animator) {
+                isAnimating = false;
                 if (!isMenuOpen) {
                     for (LinearLayout l : floatingLayouts.values()) {
                         l.setVisibility(View.GONE);
