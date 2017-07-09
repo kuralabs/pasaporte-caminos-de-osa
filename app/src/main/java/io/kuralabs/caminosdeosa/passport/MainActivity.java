@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         View passportWidgets = inflater.inflate(R.layout.passport_widgets, null, false);
         rootView.addView(passportWidgets);
 
+        // Set the view for this activity
+        setContentView(rootView);
+
         // Initialize the menu and connect the page change notification
         initMenu();
 
@@ -76,9 +79,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         passport.addOnPageChangeListener(handler);
-
-        // Set the view for this activity
-        setContentView(rootView);
     }
 
     @Override
