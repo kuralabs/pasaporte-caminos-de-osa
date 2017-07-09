@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
                     page = "data";
                 } else if (pageNo == 2) {
                     page = "manifesto";
+                } else if (pageNo == 3) {
+                    page = "manifesto";
                 } else if (pageNo < pages - 1) {
                     page = "stamps";
                 } else {

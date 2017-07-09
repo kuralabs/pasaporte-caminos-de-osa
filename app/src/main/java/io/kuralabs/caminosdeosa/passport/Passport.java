@@ -43,6 +43,9 @@ public class Passport implements BookManager {
             } else if (i == 2) {
                 // Add manifesto
                 pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.manifesto));
+            } else if (i == 3) {
+                // Add manifesto second page
+                pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.manifesto2));
             } else {
                 pages.add(BitmapFactory.decodeResource(context.getResources(), R.drawable.background));
             }
