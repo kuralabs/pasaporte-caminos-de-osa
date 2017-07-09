@@ -1,5 +1,6 @@
 package io.kuralabs.caminosdeosa.passport;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.content.Intent;
@@ -16,13 +17,15 @@ import android.util.Log;
 
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.vansuita.pickimage.bean.PickResult;
+import com.vansuita.pickimage.listeners.IPickResult;
 
 import io.kuralabs.caminosdeosa.passport.flip.BookView;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IPickResult {
 
     View decorView;
 
@@ -116,20 +119,6 @@ public class MainActivity extends AppCompatActivity {
         return bookView.onTouchEvent(event);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            String message = result.getContents() == null ?
-                    "Cancelled" :
-                    "Scanned: " + result.getContents();
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-
     // Menu Setup
     private void initMenu() {
         Map<String, LinearLayout> floatingButtons = new HashMap<>();
@@ -147,5 +136,43 @@ public class MainActivity extends AppCompatActivity {
         menu.onOverlayClick(findViewById(R.id.fabBGLayout));
 
         menu.setCurrentPage("cover");
+    }
+
+    /**
+     * Button callbacks
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (result == null) {
+            super.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+
+        String contents = result.getContents();
+
+        if (contents == null) {
+            Toast.makeText(this, "Invalid QR Code", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (!contents.startsWith("cdo://")) {
+            Toast.makeText(this, "Not an OSA QR Code", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String stamp = contents.substring("cdo://".length());
+        passport.drawStamp(stamp);
+    }
+
+    @Override
+    public void onPickResult(PickResult r) {
+        if (r.getError() != null) {
+            Toast.makeText(this, r.getPath(), Toast.LENGTH_LONG).show();
+            return;
+        }
+        Bitmap photo = r.getBitmap();
+        passport.drawPhoto(photo);
     }
 }

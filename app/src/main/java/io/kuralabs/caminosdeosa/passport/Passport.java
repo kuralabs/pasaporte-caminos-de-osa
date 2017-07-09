@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.Message;
+import android.util.Log;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -144,5 +145,18 @@ public class Passport implements BookManager {
     public BookManager addOnPageChangeListener(Handler listener) {
         this.listeners.add(listener);
         return this;
+    }
+
+    @Override
+    public void drawStamp(String stamp) {
+        // FIXME: Draw stamp in canvas here
+        Log.d("Passport", "Got stamp: " + stamp);
+    }
+
+    @Override
+    public void drawPhoto(Bitmap photo) {
+        // FIXME: Draw photo in canvas here
+        Log.d("Passport", "Got photo");
+        photo.recycle();
     }
 }

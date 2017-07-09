@@ -19,7 +19,7 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FloatingMenu implements IPickResult {
+public class FloatingMenu {
 
     LinearLayout editFabLayout, shareFabLayout, addPhotoFabLayout, addStampFabLayout;
     FloatingActionButton menuFab;
@@ -29,8 +29,19 @@ public class FloatingMenu implements IPickResult {
     boolean isAnimating = false;
     Context context;
     View fabOverlay;
-
     String currentPage = "cover";
+    int floatingButtonsPosition[] = {
+        R.dimen.standard_55,
+        R.dimen.standard_100,
+        R.dimen.standard_145,
+        R.dimen.standard_190
+    };
+
+    public FloatingMenu(Context mainContext, Map<String, LinearLayout> buttonsLayouts) {
+        floatingLayouts = buttonsLayouts;
+        context = mainContext;
+        setMenuConfig();
+    }
 
     public FloatingMenu setCurrentPage(String page) {
 
@@ -43,19 +54,6 @@ public class FloatingMenu implements IPickResult {
         menuFab.setVisibility(hideMenuButton ? View.GONE : View.VISIBLE);
 
         return this;
-    }
-
-    int floatingButtonsPosition[] = {
-        R.dimen.standard_55,
-        R.dimen.standard_100,
-        R.dimen.standard_145,
-        R.dimen.standard_190
-    };
-
-    public FloatingMenu(Context mainContext, Map<String, LinearLayout> buttonsLayouts) {
-        floatingLayouts = buttonsLayouts;
-        context = mainContext;
-        setMenuConfig();
     }
 
     public void onShareClick(FloatingActionButton button) {
@@ -201,28 +199,5 @@ public class FloatingMenu implements IPickResult {
 
             }
         });
-    }
-
-    @Override
-    public void onPickResult(PickResult r) {
-        if (r.getError() == null) {
-            //If you want the Uri.
-            //Mandatory to refresh image from Uri.
-            //getImageView().setImageURI(null);
-
-            //Setting the real returned image.
-            //getImageView().setImageURI(r.getUri());
-
-            //If you want the Bitmap.
-
-            // getImageView().setImageBitmap(r.getBitmap());
-            Toast.makeText(context, r.getPath(), Toast.LENGTH_LONG).show();
-            //Image path
-            //r.getPath();
-        } else {
-            //Handle possible errors
-            //TODO: do what you have to do with r.getError();
-            Toast.makeText(context, r.getError().getMessage(), Toast.LENGTH_LONG).show();
-        }
     }
 }

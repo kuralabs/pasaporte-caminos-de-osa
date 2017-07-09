@@ -17,4 +17,7 @@ public interface BookManager extends OnPageFlipListener {
     BookManager setPageNo(int pageNo); // Requires locking
     int getPageNo(); // locking is recommended
     BookManager addOnPageChangeListener(Handler listener);
+
+    void drawStamp(String stamp);
+    void drawPhoto(Bitmap photo);
 }
