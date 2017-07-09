@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.concurrent.locks.ReentrantLock;
 
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.os.Handler;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -223,6 +224,54 @@ public class Passport implements BookManager {
     public void drawPhoto(Bitmap photo) {
         // FIXME: Draw photo in canvas here
         Log.d("Passport", "Got photo");
-        photo.recycle();
+
+        // Create temporal buffer
+        int currentPageNo = pageNo;
+        Bitmap buffer = null;
+        Bitmap scaledPhoto = null;
+
+        try {
+            buffer = createPage();
+            Canvas canvas = new Canvas(buffer);
+
+            // Copy second buffer into third
+            try {
+                pagesLock.lock();
+                canvas.drawBitmap(pages.get(currentPageNo), 0, 0, null);
+            } finally {
+                pagesLock.unlock();
+            }
+
+            // Paint photo
+            Matrix matrix = new Matrix();
+            matrix.postRotate(-10);
+            matrix.postTranslate(300, 200);
+
+            scaledPhoto = Bitmap.createScaledBitmap(
+                photo, photo.getWidth() + 600, photo.getHeight() + 600, false
+            );
+
+            canvas.drawBitmap(scaledPhoto, matrix, null);
+
+            Bitmap clip = BitmapFactory.decodeResource(context.getResources(), R.drawable.photoclip);
+            canvas.drawBitmap(clip, 550, 0, null);
+
+            // Copy third buffer into second
+            try {
+                pagesLock.lock();
+                setPage(currentPageNo, buffer);
+                pages.add(createPage());
+                setPageNo(currentPageNo); // Trigger listeners
+            } finally {
+                pagesLock.unlock();
+            }
+
+        } finally {
+            if (buffer != null) {
+                buffer.recycle();
+            }
+            scaledPhoto.recycle();
+            photo.recycle();
+        }
     }
 }
