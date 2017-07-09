@@ -31,7 +31,7 @@ public class BookView extends GLSurfaceView implements Renderer {
     PageFlip pageFlip;
     BookManager bookManager;
 
-    public BookView(Context context, BookManager manager) {
+    public BookView(Context context, BookManager bookManager) {
         super(context);
 
         pageNo = 0;
@@ -39,7 +39,7 @@ public class BookView extends GLSurfaceView implements Renderer {
         drawLock = new ReentrantLock();
 
         // Store book renderer
-        bookManager = manager;
+        this.bookManager = bookManager;
 
         // Create PageFlip
         pageFlip = new PageFlip(context);
@@ -75,15 +75,17 @@ public class BookView extends GLSurfaceView implements Renderer {
             Page page = pageFlip.getFirstPage();
 
             // 2. Handle drawing command triggered from finger moving and animating.
-            int drawCommandCache = drawCommand;
-            if (drawCommandCache == DRAW_MOVING_FRAME || drawCommandCache == DRAW_ANIMATING_FRAME) {
+            if (drawCommand == DRAW_MOVING_FRAME || drawCommand == DRAW_ANIMATING_FRAME) {
 
                 // Is forward flip.
                 if (pageFlip.getFlipState() == PageFlipState.FORWARD_FLIP) {
+                    Log.d("FORWARD_FLIP", Integer.toString(pageNo));
+
                     // Check if second texture of first page is valid, if not, create new one.
                     if (!page.isSecondTextureSet()) {
                         try {
                             bookManager.getLock().lock();
+                            Log.d("setSecondTexture", "PageNo + 1: " + Integer.toString(pageNo + 1));
                             Bitmap bitmap = bookManager.getPage(pageNo + 1);
                             page.setSecondTexture(bitmap);
                         } finally {
@@ -92,30 +94,31 @@ public class BookView extends GLSurfaceView implements Renderer {
                     }
 
                 // Is backward flip
-                } else if (!page.isFirstTextureSet()) {
-                    // In backward flip, check first texture of first page is valid.
-                    try {
-                        bookManager.getLock().lock();
-                        --pageNo;
-                        bookManager.setPageNo(pageNo);
-                        Bitmap bitmap = bookManager.getPage(pageNo);
-                        page.setFirstTexture(bitmap);
-                        Log.d("PageNo", Integer.toString(pageNo));
-                    } finally {
-                        bookManager.getLock().unlock();
+                } else {
+                    Log.d("BACKWARD_FLIP", Integer.toString(pageNo));
+                    if (!page.isSecondTextureSet()) {
+                        page.setSecondTextureWithFirst();
+                        try {
+                            bookManager.getLock().lock();
+                            Bitmap bitmap = bookManager.getPage(pageNo - 1);
+                            page.setFirstTexture(bitmap);
+                        } finally {
+                            bookManager.getLock().unlock();
+                        }
                     }
                 }
 
                 // Draw frame for page flip.
                 pageFlip.drawFlipFrame();
 
-            } else if (drawCommandCache == DRAW_FULL_PAGE) {
+            } else if (drawCommand == DRAW_FULL_PAGE) {
                 // Draw stationary page without flipping.
                 if (!page.isFirstTextureSet()) {
                     try {
                         bookManager.getLock().lock();
                         Bitmap bitmap = bookManager.getPage(pageNo);
                         page.setFirstTexture(bitmap);
+                        Log.d("DRAW_FULL_PAGE", "setFirstTexture: " + Integer.toString(pageNo));
                     } finally {
                         bookManager.getLock().unlock();
                     }
@@ -125,7 +128,7 @@ public class BookView extends GLSurfaceView implements Renderer {
             }
 
             //////////
-            if (drawCommandCache != DRAW_ANIMATING_FRAME) {
+            if (drawCommand != DRAW_ANIMATING_FRAME) {
                 return;
             }
 
@@ -141,23 +144,32 @@ public class BookView extends GLSurfaceView implements Renderer {
 
             // update page number for backward flip
             if (state == PageFlipState.END_WITH_BACKWARD) {
-                // don't do anything on page number since mPageNo is always
-                // represents the FIRST_TEXTURE no;
+                Log.d("END_WITH_BACKWARD", Integer.toString(pageNo));
+                try {
+                    bookManager.getLock().lock();
+                    pageNo--;
+                    bookManager.setPageNo(pageNo);
+                    Log.d("setPageNo", Integer.toString(pageNo));
+                } finally {
+                    bookManager.getLock().unlock();
+                }
+                Log.d("END_WITH_BACKWARD", Integer.toString(pageNo));
             } else if (state == PageFlipState.END_WITH_FORWARD) {
-                // update page number and switch textures for forward flip
-                pageFlip.getFirstPage().setFirstTextureWithSecond();
+                Log.d("END_WITH_FORWARD", "setFirstTextureWithSecond: " + Integer.toString(pageNo));
+                page.setFirstTextureWithSecond();
 
                 try {
                     bookManager.getLock().lock();
                     pageNo++;
                     bookManager.setPageNo(pageNo);
-                    Log.d("PageNo", Integer.toString(pageNo));
+                    Log.d("setPageNo", Integer.toString(pageNo));
                 } finally {
                     bookManager.getLock().unlock();
                 }
             }
 
             drawCommand = DRAW_FULL_PAGE;
+            Log.d("DRAW_FULL_PAGE", Integer.toString(pageNo));
             requestRender();
         }
         finally {
@@ -231,8 +243,7 @@ public class BookView extends GLSurfaceView implements Renderer {
                     drawCommand = DRAW_ANIMATING_FRAME;
                     requestRender();
                 }
-            }
-            finally {
+            } finally {
                 drawLock.unlock();
             }
         }
