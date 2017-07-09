@@ -91,14 +91,12 @@ public class MainActivity extends AppCompatActivity {
             View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         );
-
         bookView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
         bookView.onPause();
     }
 
@@ -123,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Menu Setup
     private void initMenu() {
-        Map<String, LinearLayout> floatingButtons = new HashMap<String, LinearLayout>();
+        Map<String, LinearLayout> floatingButtons = new HashMap<>();
         floatingButtons.put("share", (LinearLayout) findViewById(R.id.shareFabLayout));
         floatingButtons.put("add", (LinearLayout) findViewById(R.id.addStampFabLayout));
         floatingButtons.put("photo", (LinearLayout) findViewById(R.id.addPhotoFabLayout));

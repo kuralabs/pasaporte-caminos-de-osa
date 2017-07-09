@@ -15,6 +15,7 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,13 +25,17 @@ public class FloatingMenu implements IPickResult {
     FloatingActionButton menuFab;
     Map<String, String[]> floatingMenuConfig;
     Map<String, LinearLayout> floatingLayouts;
+    boolean isMenuOpen = false;
     Context context;
     View fabOverlay;
 
-    //TODO: Pull the current page from the actual PageFlip component
     String currentPage = "cover";
 
     public FloatingMenu setCurrentPage(String page) {
+
+        if (!floatingMenuConfig.containsKey(page)) {
+            throw new InvalidParameterException("Unknown page type " + page);
+        }
         this.currentPage = page;
 
         boolean hideMenuButton = page.equals("cover") || page.equals("manifesto");
@@ -39,10 +44,11 @@ public class FloatingMenu implements IPickResult {
         return this;
     }
 
-    boolean isMenuOpen = false;
-
     int floatingButtonsPosition[] = {
-        R.dimen.standard_55, R.dimen.standard_100, R.dimen.standard_145, R.dimen.standard_190
+        R.dimen.standard_55,
+        R.dimen.standard_100,
+        R.dimen.standard_145,
+        R.dimen.standard_190
     };
 
     public FloatingMenu(Context mainContext, Map<String, LinearLayout> buttonsLayouts) {
