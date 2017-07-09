@@ -56,7 +56,7 @@ public class FloatingMenu {
         return this;
     }
 
-    public void onShareClick(FloatingActionButton button) {
+    public void onShareClick(FloatingActionButton button, final Passport passport) {
         shareFabLayout = floatingLayouts.get("share");
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +64,7 @@ public class FloatingMenu {
                 if (isAnimating) {
                     return;
                 }
+                passport.shareScreenshot();
             }
         });
     }

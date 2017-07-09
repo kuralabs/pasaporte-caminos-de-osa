@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements IPickResult {
         floatingButtons.put("edit", (LinearLayout) findViewById(R.id.editFabLayout));
 
         menu = new FloatingMenu(this, floatingButtons);
-        menu.onShareClick((FloatingActionButton) findViewById(R.id.shareFab));
+        menu.onShareClick((FloatingActionButton) findViewById(R.id.shareFab), passport);
         menu.onEditClick((FloatingActionButton) findViewById(R.id.editFab));
         menu.onAddPhotoClick((FloatingActionButton) findViewById(R.id.addPhotoFab), this);
         menu.onAddStampClick((FloatingActionButton) findViewById(R.id.addStampFab), this);

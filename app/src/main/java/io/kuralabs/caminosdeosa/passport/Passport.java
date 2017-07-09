@@ -1,11 +1,17 @@
 package io.kuralabs.caminosdeosa.passport;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.locks.ReentrantLock;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Handler;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,6 +19,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Message;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.security.InvalidParameterException;
@@ -260,7 +268,6 @@ public class Passport implements BookManager {
             try {
                 pagesLock.lock();
                 setPage(currentPageNo, buffer);
-                pages.add(createPage());
                 setPageNo(currentPageNo); // Trigger listeners
             } finally {
                 pagesLock.unlock();
@@ -270,8 +277,54 @@ public class Passport implements BookManager {
             if (buffer != null) {
                 buffer.recycle();
             }
-            scaledPhoto.recycle();
-            photo.recycle();
+            if (photo != null) {
+                photo.recycle();
+            }
+            if (scaledPhoto != null) {
+                scaledPhoto.recycle();
+            }
+        }
+    }
+
+    public void shareScreenshot() {
+        // Get a copy of the current page
+        int currentPageNo = pageNo;
+        Bitmap currentPage = null;
+        try {
+            pagesLock.lock();
+            currentPage = pages.get(currentPageNo).copy(Bitmap.Config.ARGB_8888, true);
+        } finally {
+            pagesLock.unlock();
+        }
+
+        // save bitmap to cache directory
+        try {
+
+            File cachePath = new File(context.getCacheDir(), "images");
+            cachePath.mkdirs(); // Don't forget to make the directory
+            FileOutputStream stream = new FileOutputStream(cachePath + "/image.png"); // overwrites this image every time
+            currentPage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            stream.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        File imagePath = new File(context.getCacheDir(), "images");
+        File newFile = new File(imagePath, "image.png");
+        Uri contentUri = FileProvider.getUriForFile(
+            context,
+            "io.kuralabs.caminosdeosa.passport.fileprovider",
+            newFile
+        );
+
+        if (contentUri != null) {
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
+            shareIntent.setDataAndType(contentUri, context.getContentResolver().getType(contentUri));
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            context.startActivity(Intent.createChooser(shareIntent, "Choose an app"));
         }
     }
 }

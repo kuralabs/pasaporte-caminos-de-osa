@@ -20,4 +20,5 @@ public interface BookManager extends OnPageFlipListener {
 
     void drawStamp(String stamp);
     void drawPhoto(Bitmap photo);
+
 }
